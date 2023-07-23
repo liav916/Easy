@@ -122,14 +122,13 @@ public class BasePage
 //                // Use the Hebrew name as the value for the city variable
 //                String city = hebrewName;
 //
-//                // Rest of your code here...
 //                // Use the updated city variable in your code as needed
 //            }
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
 //    }
-
+//fsdsdf
     public  void waitForElement(By by) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(by));

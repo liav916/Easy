@@ -144,7 +144,7 @@ public class HomePage extends BasePage {
                 click(closePopUpButton);  // Close the ad pop-up
             }
         } catch (NoSuchElementException e) {
-            // Ad pop-up not found, continue without blocking ads
+            // Ad pop-up not found, continue without  blocking ads
         }
     }
 
