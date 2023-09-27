@@ -1,25 +1,22 @@
 package PageObjects;
 
-import Tests.BaseTest;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.openqa.selenium.*;
-import com.mongodb.client.result.*;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.Driver;
-import java.util.List;
 
-import static com.mongodb.client.model.Aggregates.skip;
-import static java.lang.Thread.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpRequest;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 
 
 public class HomePage extends BasePage {
@@ -27,199 +24,196 @@ public class HomePage extends BasePage {
     public HomePage(WebDriver driver) {
         super(driver);
     }
+    String City = "HOLON";
+    By recaptcha = By.cssSelector("[class=\"page-error gradient-multiple-bg\"]");
+    By nextButton = By.cssSelector(".next-page-button");
+    By allPostsConteiner = By.cssSelector(".list-results");
+    By BackButton = By.cssSelector(".back-icon");
+    By ByStoreName = By.cssSelector(".biz-title");
+    By ByStoreService = By.cssSelector("span.best-sub-cat");
+    By ByStoreAddress = By.cssSelector(".biz-address-text");
+    By ByStoreNumber = By.cssSelector("#action-phone-label");
+    By BYTotal = By.cssSelector(".heading-box");
 
-    String city= "אשדוד";  // The desired city for the search
 
-    // Locators for login functionality
-    By loginToUserButton = By.cssSelector("span[class=\"user-drop-container_circleArea__p2Zt2\"]");
-    By emailField = By.cssSelector("input[type='email']");
-    By passwordField = By.cssSelector("input[type='password']");
-    By submitButton = By.cssSelector("button[type='submit']");
-
-    // Locator for real estate button
-    By realEstateButton = By.cssSelector("[alt='נדל״ן']");
-
-    // Locators for search functionality
-    By cityField = By.cssSelector("[name='topArea,area,city,neighborhood,street,x_g,y_g']");
-    By searchButton = By.cssSelector("button[data-test-id=\"searchButton\"]");
-    By groupTitleElements = By.cssSelector("[data-test-id=\"searchAutoComplete_options_address\"]");
-
-    // Locators for selecting apartment type
-    By TypeOfApartmentDropdown = By.cssSelector("[class='y2_dropdown field_dropdown right']");
-    By allCheckBox = By.cssSelector("[class=\"cb_text\"]");
-
-    // Locators for navigating through posts
-    By MaxPage = By.cssSelector("button.page-num");
-    By nextButton = By.cssSelector("[class=\"y2i_back forward-icon\"]");
-
-    // Locators for handling pop-up ads
-    By PopUp = By.cssSelector("[class=\"y2-dialog-content\"]");
-    By closePopUpButton = By.cssSelector("button[class=\"close-btn\"]");
-
-    // Locators for retrieving post information
-    By allPosts = By.cssSelector("[class^=\"color_container\"]");
-    By emptyResults = By.cssSelector("[class=\"empty_results_notification\"]");
-
-    public void loginToUser()  {
-        Waitviseblity(loginToUserButton);  // Wait for the login button to be visible
-        click(loginToUserButton);  // Click the login button
-        sendKeys(emailField,"jennyjenkins742@gmail.com");  // Enter the email
-        sendKeys(passwordField,"Qwerty123");  // Enter the password
-        click(submitButton);  // Submit the login form
-    }
-
-    public void clickonrealestate(){
-        waitForElement(realEstateButton);  // Wait for the real estate button to be visible
-        click(realEstateButton);  // Click the real estate button
-    }
-
-    public void searchForCity(String city1) throws InterruptedException {
-        waitForElement(cityField);  // Wait for the city field to be visible
-        click(cityField);  // Click the city field
-        sendKeys(cityField, city1);  // Enter the desired city
-        click(cityField);  // Click the city field again to trigger the search
-        waitForElement(groupTitleElements);  // Wait for the search results to be displayed
-        List<WebElement> list = driver.findElements(groupTitleElements);  // Get the list of search results
-        for (int i =0; i < list.size(); i++) {
-            String name = list.get(i).getText();
-            if (name.contains(city1) && name.contains("עיר")||name.contains("ישוב") ) {  // Check if the result matches the desired city
-                (list.get(i)).click();  // Click the matching search result
-                clickOnApartmentCheckbox();  // Select the apartment checkbox
-                click(searchButton);  // Initiate the search
-                break;
-            }
+    public void Post(String storeName, String storeService, String storeAddress, String storeNumber) throws Exception {
+        HttpClient httpClient = HttpClient.newHttpClient();
+        // Replace with the actual API endpoint
+        String apiUrl = "https://script.google.com/macros/s/AKfycbw_MLiirmtNkNWpeOI-zHqDfca5pCnhuNn2ll_qRfvCKbYavvCnOQ4oYS8CvUwcd3eZzw/exec";
+        // Replace with the desired JSON payload
+        String jsonPayload = "{\n" +
+                "  \"city\":\""+City+"\",\n" +
+                "  \"storeName\":\"" + storeName + "\",\n" +
+                "  \"storeService\":\"" + storeService + "\",\n" +
+                "  \"address\":\"" + storeAddress + "\",\n" +
+                "  \"phone\":\"" + storeNumber + "\"\n" +
+                "}";
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(apiUrl))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+                .header("Content-Type", "application/json") // Set the content type to JSON
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        // Check the HTTP status code
+        int statusCode = response.statusCode();
+        if (statusCode == 302) { // 201 indicates a successful creation in many APIs
+            String responseBody = response.body();
+            System.out.println("status code: " + statusCode);
+            System.out.println("Response Body:\n" + responseBody);
+        } else {
+            System.out.println("POST request failed with status code: " + statusCode);
+            System.out.println(jsonPayload);
         }
     }
 
-    public void clickOnApartmentCheckbox() {
-        click(TypeOfApartmentDropdown);  // Click the dropdown for selecting apartment type
-        List<WebElement> list = driver.findElements(allCheckBox);  // Get the list of checkboxes
-        for (int i =0; i < list.size(); i++) {
-            String name = list.get(i).getText();
-            if (name.contains("דירות")) {  // Check if the checkbox represents apartments
-                (list.get(i)).click();  // Click the checkbox
-                break;
-            }
-        }
-    }
-    public void jsonReader() throws InterruptedException, IOException, ParseException {
-        JSONParser parser = new JSONParser();
-        clickonrealestate();
-        Object obj = parser.parse(new FileReader("C:\\Users\\liav\\IdeaProjects\\Yad2\\src\\Data\\israel_cities.json"));
-        JSONObject jsonObject = (JSONObject) obj;
-        JSONArray cities = (JSONArray) jsonObject.get("city");
+    public void recaptchapass() throws InterruptedException {
+        boolean captchaPresent = isElementPresent(recaptcha);
 
-        for (Object cityObj : cities) {
-            JSONObject city = (JSONObject) cityObj;
-            JSONArray hebrewNameArray = (JSONArray) city.get("hebrew_name");
-            String hebrewName1 = (String) hebrewNameArray.get(0);
-            int endIndex = hebrewName1.indexOf(')');
-            if (endIndex != -1) {
-                String hebrewName = hebrewName1.substring(0, endIndex);
-                searchForCity(hebrewName);
-                waitForElement(emptyResults);
-                WebElement empty = driver.findElement(emptyResults);
-                if (empty.isDisplayed())
-                {
-                    continue;
-                }
-                OpenAllPosts();
+        while (captchaPresent) {
+            System.out.println("Captcha detected. Please manually pass the captcha.");
+            Thread.sleep(20000); // Sleep for 5 seconds before checking again
 
-            }
+            captchaPresent = isElementPresent(recaptcha);
         }
 
-
-
+        System.out.println("Captcha passed or not detected.");
+        Thread.sleep(10000);
     }
-
-
-
-
-
-    public void BlockAds() {
+    public boolean isElementPresent(By by) {
         try {
-            WebElement popUp = driver.findElement(PopUp);
-            if (popUp.isDisplayed()) {  // Check if the ad pop-up is displayed
-                waitForElement(closePopUpButton);  // Wait for the close button to be visible
-                click(closePopUpButton);  // Close the ad pop-up
-            }
+            driver.findElement(by);
+            return true;
         } catch (NoSuchElementException e) {
-            // Ad pop-up not found, continue without  blocking ads
+            return false;
         }
     }
-
-    public void OpenAllPosts() throws InterruptedException {
-        Thread.sleep(5000);
-        waitForElement(MaxPage);  // Wait for the max page indicator to be visible
-        WebElement maxPage = driver.findElement(MaxPage);  // Get the max page element
-        int maxPageText = Integer.parseInt(maxPage.getText());  // Get the max page number
-        System.out.println(maxPageText);
-        for (int i = 0; i <= maxPageText; i++) {
-            System.out.println("page number: " + (i + 1));
-
-            ((JavascriptExecutor) driver).executeScript("window.scrollTo(2, document.body.scrollHeight);");
-            Thread.sleep(5000);
-            BlockAds();  // Block ads if they appear
-            ((JavascriptExecutor) driver).executeScript("window.scrollTo(2, 0);");  // Scroll all the way up
-            GetAllPostInfo();  // Get information from all posts on the current page
-            click(nextButton);  // Go to the next page
+    public void clickOnMoreAds() throws InterruptedException {
+    Thread.sleep(1000);
+  try {
+      WebElement nextButtonElement = driver.findElement(nextButton);
+        waitForElement(nextButton);
+        if (nextButtonElement.isDisplayed()){
+            ScrollAndClick(nextButton);
         }
-    }
+        clickOnMoreAds();}catch (NoSuchElementException e) {}  }
+    public void ScrollAndClick (By by) {
+        WebElement elementToClick = driver.findElement(by);
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        jsExecutor.executeScript("arguments[0].scrollIntoView(true);", elementToClick);
+        // Click the element
+        elementToClick.click();
 
 
-    public void GetAllPostInfo() throws InterruptedException {
-        Thread.sleep(20000);
-        List<WebElement> list = driver.findElements(allPosts);  // Get the list of all posts on the page
-        System.out.println(list.size());
-        for (int i = 0; i < list.size(); i++) {
-            By postTitle = By.cssSelector("[id='feed_item_" + i + "_title']");
-            waitForElement(postTitle);  // Wait for the post title element to be visible
-            By subtitleSelector = By.cssSelector("[id='feed_item_" + i + "_title'] ~ .subtitle");
-            WebElement postTitleElement = driver.findElement(postTitle);  // Get the post title element
-            By postPrice = By.cssSelector("[id='feed_item_" + i + "_price']");
-            waitForElement(postPrice);  // Wait for the post title element to be visible
-            click(postTitle);
-            Thread.sleep(5000);
-            By postContent = By.cssSelector("[class=\"show-more-container\"]");
-            By postImg = By.cssSelector("[class=\"feedImage\"]");
-            waitForElement(postImg);
-            List<WebElement> postImgList = driver.findElements(postImg);
-            String img = postImgList.get(i).getAttribute("src");  // Get the post image
-            waitForElement(postContent);  // Wait for the post content element to be visible
-            List<WebElement> postContentList = driver.findElements(postContent);
-            Thread.sleep(5000);
+}
+    public void clickOnPosts() throws Exception {
+        recaptchapass();
+        WebElement allPostsElement = driver.findElement(allPostsConteiner);
+        waitForElement(allPostsConteiner);
+        List<WebElement> posts;
+        clickOnMoreAds();
+        Thread.sleep(3000);
+        recaptchapass();
+       // posts = allPostsElement.findElements(By.cssSelector("[class^='list-results-scroll'] li"));
+        posts = allPostsElement.findElements(By.cssSelector(".list-results li"));
 
-            String content = postContentList.get(i).getText();  // Get the post subtitle
-            String title = postTitleElement.findElement(By.tagName("span")).getText();  // Get the post title
-            //  title = title.replaceAll("מפה", "");  // Cut out the word "מפה" from the title
-            List<WebElement> postPriceList = driver.findElements(postPrice);
-            System.out.println(postPriceList.get(0).getText());
-            String price = postPriceList.get(0).getText();
-            // Get the post subtitle
-            if (title.isEmpty()) {
-                System.out.println("title EMPTY -> " + i);
-                continue;
-            } else {
-                System.out.println("Post " + i + " Title: " + title);
-            }
-
+        System.out.println("post size is" + posts.size());
+        for (int i = 0; i < posts.size(); i++) {
+            recaptchapass();
+            WebElement post = posts.get(i);
             try {
-                WebElement subtitleElement = driver.findElement(subtitleSelector);
-                String subtitle = subtitleElement.getText();  // Get the post subtitle
-
-                if (subtitle.isEmpty()) {
-                    System.out.println("subtitle EMPTY -> " + i);
-                } else {
-                    System.out.println("Post " + i + " Subtitle : " + subtitle);
-                    System.out.println("post " + i + "info: "+ content);
-                    System.out.println("post " + i + " image link : "+ img);
-                    System.out.println("post "+i+"Price : "+ price);
-
-                }
-            } catch (NoSuchElementException e) {
-                System.out.println("subtitle element not found for post " + i);
+            //    Thread.sleep(1000);
+                scrollToElementAndClick(post);
+            } catch (StaleElementReferenceException e) {
+                System.out.println("Stale element reference, retrying click...");
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // Adjust the timeout as needed
+                post = wait.until(ExpectedConditions.elementToBeClickable(posts.get(i)));
+                post.click();
+             //  post.click();
 
             }
+      //      Thread.sleep(1000);
+
+            // Extract information
+            String storeName = getStoreInfo(ByStoreName, i);
+            String storeService = getStoreService(ByStoreService, i);
+            String storeAddress = getStoreInfo(ByStoreAddress, i);
+            String storeNumber = getStoreInfo(ByStoreNumber, i);
+            storeAddress = storeAddress.replace("\"", "'");
+System.out.println("storeName : "+storeName+"\n"+
+                   "storeService : "+storeService+"\n"+
+                   "storeAddress : "+storeAddress+"\n"+
+                   "storeNumber : "+storeNumber+"\n"+
+                   "post number: " + i+"\n"+"------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+
+
+            // Call the Post method with the extracted values
+            Post(storeName, storeService, storeAddress, storeNumber);
+
+            waitForElement(BackButton);
+            Thread.sleep(2000);
+
+//           String currentURL = driver.getCurrentUrl();
+           try{ click(BackButton);} catch (ElementClickInterceptedException e){scrollTobYElementAndClick(BackButton);
+           }
+
+//            Thread.sleep(1000);
+//            String currentURL2 = driver.getCurrentUrl();
+//if (currentURL.equals(currentURL2))
+//{click(BackButton);}
+
+
+            clickOnMoreAds();
+            waitForElement(allPostsConteiner);
+            recaptchapass();
         }
+    }
+    public String getStoreInfo(By by, int index)  {
+
+        String StoreName;
+       try{ waitForElement(by); // Make sure this method correctly waits for the element
+        WebElement element = driver.findElement(by); // Assuming 'driver' is your WebDriver instance
+        StoreName = element.getText();}
+        catch (TimeoutException e){
+            StoreName = "there is no phone number for the this buisnes";
+        }
+
+        // Remove the word "מנוהל" from StoreName
+        StoreName = StoreName.replace("מנוהל", "").trim();
+        StoreName = StoreName.replace("\"", "'");
+
+
+       // System.out.println("Post Number: " + index+" "+ StoreName);
+        return StoreName;
+    }
+
+    public String getStoreService(By by, int index)  {
+        WebElement element = driver.findElement(BYTotal); // Assuming 'driver' is your WebDriver instance
+        WebElement element1 = element.findElement(by); // Assuming 'driver' is your WebDriver instance
+
+        String StoreName;
+        waitForElement(by); // Make sure this method correctly waits for the element
+        StoreName = element1.getText();
+        // Remove the word "מנוהל" from StoreName
+
+
+        if (StoreName.contains("חלקי"))
+        {
+            StoreName = "חנות";
+        }
+else
+        {
+            StoreName = "נותן שירות";
+        }
+       // System.out.println("Post Number: " + index+" :"+ StoreName);
+        return StoreName;
     }
 }
+
+
+
+
+
+
+
+
