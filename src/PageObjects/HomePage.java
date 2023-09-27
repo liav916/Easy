@@ -130,7 +130,7 @@ public class HomePage extends BasePage {
                 post.click();
              //  post.click();
 
-            }
+            }//
       //      Thread.sleep(1000);
 
             // Extract information
