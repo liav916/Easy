@@ -156,7 +156,7 @@ System.out.println("storeName : "+storeName+"\n"+
 //           String currentURL = driver.getCurrentUrl();
            try{ click(BackButton);} catch (ElementClickInterceptedException e){scrollTobYElementAndClick(BackButton);
            }
-
+            //
 //            Thread.sleep(1000);
 //            String currentURL2 = driver.getCurrentUrl();
 //if (currentURL.equals(currentURL2))
