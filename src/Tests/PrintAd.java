@@ -14,12 +14,11 @@ public class PrintAd extends BaseTest {
 
     @Test
     public void test01getAdvertisement () throws Exception {
-        driver.get("https://easy.co.il/list/Auto-Parts?region=773&order=1");
+        driver.get("https://easy.co.il/list/Auto-Parts?region=442&order=1");
 homePage.clickOnPosts();
 
 
 }
-
 
 
         }

@@ -24,7 +24,7 @@ public class HomePage extends BasePage {
     public HomePage(WebDriver driver) {
         super(driver);
     }
-    String City = "HOLON";
+    String City = "BEIT SHEAN";
     By recaptcha = By.cssSelector("[class=\"page-error gradient-multiple-bg\"]");
     By nextButton = By.cssSelector(".next-page-button");
     By allPostsConteiner = By.cssSelector(".list-results");
@@ -127,11 +127,9 @@ public class HomePage extends BasePage {
                 System.out.println("Stale element reference, retrying click...");
                 WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // Adjust the timeout as needed
                 post = wait.until(ExpectedConditions.elementToBeClickable(posts.get(i)));
-                post.click();
-             //  post.click();
+                scrollToElementAndClick2(post);             //  post.click();
+            }
 
-            }//
-      //      Thread.sleep(1000);
 
             // Extract information
             String storeName = getStoreInfo(ByStoreName, i);
@@ -154,7 +152,7 @@ System.out.println("storeName : "+storeName+"\n"+
             Thread.sleep(2000);
 
 //           String currentURL = driver.getCurrentUrl();
-           try{ click(BackButton);} catch (ElementClickInterceptedException e){scrollTobYElementAndClick(BackButton);
+           try{ click(BackButton);} catch (ElementClickInterceptedException e){driver.navigate().back();
            }
             //
 //            Thread.sleep(1000);

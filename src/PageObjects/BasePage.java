@@ -48,7 +48,17 @@ public class BasePage
     public void scrollToElementAndClick(WebElement element) {
         JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
         jsExecutor.executeScript("arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});", element);
+      //  jsExecutor.executeScript("arguments[0].click()", element);
+
         element.click();
+    }
+
+    public void scrollToElementAndClick2(WebElement element) {
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        jsExecutor.executeScript("arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});", element);
+          jsExecutor.executeScript("arguments[0].click()", element);
+
+        //element.click();
     }
     public void scrollTobYElementAndClick(By elementLocation) {
         WebElement element = driver.findElement(elementLocation);
